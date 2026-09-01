@@ -19,10 +19,8 @@ func main() {
 	writer := csv.NewWriter(file)
 	defer writer.Flush()
 
-	// Write CSV header
 	writer.Write([]string{"Name", "Symbol", "Market Cap (USD)", "Price (USD)", "Circulating Supply (USD)", "Volume (24h)", "Change (1h)", "Change (24h)", "Change (7d)"})
 
-	// Instantiate default collector
 	c := colly.NewCollector()
 
 	c.OnHTML("tbody tr", func(e *colly.HTMLElement) {

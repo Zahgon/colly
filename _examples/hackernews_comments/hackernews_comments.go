@@ -31,18 +31,14 @@ func main() {
 
 	comments := make([]*comment, 0)
 
-	// Instantiate default collector
 	c := colly.NewCollector()
 
-	// Extract comment
 	c.OnHTML(".comment-tree tr.athing", func(e *colly.HTMLElement) {
 		width, err := strconv.Atoi(e.ChildAttr("td.ind img", "width"))
 		if err != nil {
 			return
 		}
-		// hackernews uses 40px spacers to indent comment replies,
-		// so we have to divide the width with it to get the depth
-		// of the comment
+
 		depth := width / 40
 		c := &comment{
 			Replies: make([]*comment, 0),
@@ -55,7 +51,7 @@ func main() {
 			return
 		}
 		parent := comments[len(comments)-1]
-		// append comment to its parent
+
 		for i := 0; i < depth-1; i++ {
 			parent = parent.Replies[len(parent.Replies)-1]
 		}
@@ -67,6 +63,5 @@ func main() {
 	enc := json.NewEncoder(os.Stdout)
 	enc.SetIndent("", "  ")
 
-	// Dump json to the standard output
 	enc.Encode(comments)
 }

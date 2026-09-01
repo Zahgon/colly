@@ -13,7 +13,6 @@ import (
 	"github.com/gocolly/colly/v2"
 )
 
-// "id": user id, "after": end cursor
 const nextPageURL string = `https://www.instagram.com/graphql/query/?query_hash=%s&variables=%s`
 const nextPagePayload string = `{"id":"%s","first":50,"after":"%s"}`
 
@@ -87,7 +86,7 @@ func main() {
 	outputDir := fmt.Sprintf("./instagram_%s/", instagramAccount)
 
 	c := colly.NewCollector(
-		//colly.CacheDir("./_instagram_cache/"),
+
 		colly.UserAgent("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36"),
 	)
 
@@ -125,7 +124,7 @@ func main() {
 		page := data.EntryData.ProfilePage[0]
 		actualUserId = page.Graphql.User.Id
 		for _, obj := range page.Graphql.User.Media.Edges {
-			// skip videos
+
 			if obj.Node.IsVideo {
 				continue
 			}
@@ -166,7 +165,7 @@ func main() {
 		}
 
 		for _, obj := range data.Data.User.Container.Edges {
-			// skip videos
+
 			if obj.Node.IsVideo {
 				continue
 			}

@@ -9,10 +9,8 @@ import (
 	"github.com/gocolly/colly/v2"
 )
 
-// DATE_FORMAT default format date used in openedx
 const DATE_FORMAT = "02 Jan, 2006"
 
-// Course store openedx course data
 type Course struct {
 	CourseID  string
 	Run       string
@@ -24,25 +22,22 @@ type Course struct {
 }
 
 func main() {
-	// Instantiate default collector
+
 	c := colly.NewCollector(
-		// Using IndonesiaX as sample
+
 		colly.AllowedDomains("indonesiax.co.id", "www.indonesiax.co.id"),
 
-		// Cache responses to prevent multiple download of pages
-		// even if the collector is restarted
 		colly.CacheDir("./cache"),
 	)
 
 	courses := make([]Course, 0, 200)
 
-	// On every a element which has href attribute call callback
 	c.OnHTML("a[href]", func(e *colly.HTMLElement) {
 		link := e.Attr("href")
 		if !strings.HasPrefix(link, "/courses/") {
 			return
 		}
-		// start scraping the page under the link found
+
 		e.Request.Visit(link)
 	})
 
@@ -71,15 +66,12 @@ func main() {
 		courses = append(courses, course)
 	})
 
-	// Start scraping on https://openedxdomain/courses
 	c.Visit("https://www.indonesiax.co.id/courses")
 
-	// Convert results to JSON data if the scraping job has finished
 	jsonData, err := json.MarshalIndent(courses, "", "  ")
 	if err != nil {
 		panic(err)
 	}
 
-	// Dump json to the standard output (can be redirected to a file)
 	fmt.Println(string(jsonData))
 }
